@@ -139,25 +139,40 @@ export default class ReactUserTour extends Component {
 				color={this.props.arrowColor} />
 		);
 
+		const isFunction = ( f ) => {
+			return typeof f === "function";
+		}
+
 		const extraButtonProps = this.props.buttonStyle ? {style: this.props.buttonStyle} : {};
 
 		const nextButton = (
 			this.props.step !== this.props.steps.length ?
 				<TourButton
-					onClick={(e) => this.props.onNext(this.props.step + 1, e)}
-					onTouchTap={(e) => this.props.onNext(this.props.step + 1, e)}
+					onTouchTap={(e) => {
+						if ( this.props.beforeChangeStep && isFunction( this.props.beforeChangeStep ) && !this.props.beforeChangeStep( this.props.step, this.props.steps, this.props.step + 1 ) ){
+							return;
+						}
+						this.props.onNext(this.props.step + 1, e)
+					}}
 					{...extraButtonProps}
 					className="react-user-tour-next-button">
 						{this.props.nextButtonText}
 				</TourButton> : ""
 		);
 
+		let extraButtonBack = Object.assign( {}, extraButtonProps  );
+		extraButtonBack.style = Object.assign( {}, extraButtonProps.style, this.props.backButtonStyle );
+
 		const backButton = (
 			this.props.step !== 1 ?
 				<TourButton
-					onClick={(e) => this.props.onBack(this.props.step - 1, e)}
-					onTouchTap={(e) => this.props.onBack(this.props.step - 1, e)}
-					{...extraButtonProps}
+					onTouchTap={(e) => {
+						if ( this.props.beforeChangeStep && isFunction( this.props.beforeChangeStep ) && !this.props.beforeChangeStep( this.props.step, this.props.steps, this.props.step - 1 ) ){
+							return;
+						}
+						this.props.onBack(this.props.step - 1, e)
+					}}
+					{...extraButtonBack}
 					className="react-user-tour-back-button">
 						{this.props.backButtonText}
 				</TourButton> : ""
@@ -166,8 +181,7 @@ export default class ReactUserTour extends Component {
 		const doneButton = (
 			this.props.step === this.props.steps.length ?
 				<TourButton
-					onClick={() => this.props.onCancel()}
-					onTouchTap={() => this.props.onCancel}
+					onTouchTap={this.props.onCancel}
 					{...extraButtonProps}
 					className="react-user-tour-done-button">
 						{this.props.doneButtonText}
@@ -177,9 +191,9 @@ export default class ReactUserTour extends Component {
 		const tourButtonContainer = (
 			!this.props.hideButtons ?
 				<TourButtonContainer style={this.props.buttonContainerStyle}>
+					{backButton}
 					{nextButton}
 					{doneButton}
-					{backButton}
 				</TourButtonContainer> : ""
 		);
 
@@ -194,7 +208,6 @@ export default class ReactUserTour extends Component {
 			!this.props.hideClose ?
 				<span className="react-user-tour-close"
 					style={xStyle}
-					onClick={this.props.onCancel}
 					onTouchTap={this.props.onCancel}>
 						{this.props.closeButtonText}
 				</span> : ""
@@ -247,6 +260,9 @@ ReactUserTour.defaultProps = {
 	onBack: () => {},
 	nextButtonText: "Next",
 	backButtonText: "Back",
+	backButtonStyle: {
+		backgroundColor: "#fff"
+	},
 	doneButtonText: "Done",
 	closeButtonText: "Close",
 	buttonContainerStyle: {
