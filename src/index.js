@@ -136,8 +136,7 @@ export default class ReactUserTour extends Component {
 				width={this.props.style.width}
 				height={this.props.style.height}
 				size={this.props.arrowSize}
-				color={this.props.arrowColor}
-			/>
+				color={this.props.arrowColor} />
 		);
 
 		const extraButtonProps = this.props.buttonStyle ? {style: this.props.buttonStyle} : {};
@@ -145,8 +144,8 @@ export default class ReactUserTour extends Component {
 		const nextButton = (
 			this.props.step !== this.props.steps.length ?
 				<TourButton
-					onClick={() => this.props.onNext(this.props.step + 1)}
-					onTouchTap={() => this.props.onNext(this.props.step + 1)}
+					onClick={(e) => this.props.onNext(this.props.step + 1, e)}
+					onTouchTap={(e) => this.props.onNext(this.props.step + 1, e)}
 					{...extraButtonProps}
 					className="react-user-tour-next-button">
 						{this.props.nextButtonText}
@@ -156,8 +155,8 @@ export default class ReactUserTour extends Component {
 		const backButton = (
 			this.props.step !== 1 ?
 				<TourButton
-					onClick={() => this.props.onBack(this.props.step - 1)}
-					onTouchTap={() => this.props.onBack(this.props.step - 1)}
+					onClick={(e) => this.props.onBack(this.props.step - 1, e)}
+					onTouchTap={(e) => this.props.onBack(this.props.step - 1, e)}
 					{...extraButtonProps}
 					className="react-user-tour-back-button">
 						{this.props.backButtonText}
